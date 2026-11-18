@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#263f35">
+<title>La mia cineteca</title>
+<style>
+:root{
+ --ink:#26332d;--muted:#68766e;--forest:#263f35;--forest2:#355b49;
+ --paper:#fffdf7;--cream:#f2efe5;--line:#dfded2;--sage:#e4ece2;
+ --sage-deep:#bfd0c0;--terracotta:#f1e1d6;--gold:#f2ead0;--blue:#e1eaf0;
+ --rose:#f0e1e4;--shadow:0 5px 18px rgba(42,57,47,.055);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.52 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(125deg,#20372e,#365b49);color:#fff;padding:29px 19px 25px;border-bottom:5px solid #b8c9b4}
+.header-inner,main{max-width:1080px;margin:0 auto}
+.eyebrow{font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:#c7d6c8;font-weight:700}
+h1{font-family:Georgia,serif;font-size:clamp(2rem,6vw,2.8rem);font-weight:600;letter-spacing:-.035em;line-height:1.05;margin:8px 0}
+.subtitle{margin:0;color:#e1e9e0;font-size:.98rem}
+main{padding:20px 15px 54px}
+nav{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 12px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;border:1px solid #d5d8ce;background:#faf8f0;color:#425348;border-radius:12px;padding:10px 15px;font:inherit;font-size:.91rem;cursor:pointer}
+.tab.active{background:var(--forest);border-color:var(--forest);color:white;box-shadow:0 3px 8px #263f3522}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9dbba3;outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:8px 0 17px}
+.stat{border:1px solid var(--line);border-radius:15px;padding:13px 14px;box-shadow:var(--shadow);background:var(--paper)}
+.stat:nth-child(1){background:var(--sage)}.stat:nth-child(2){background:var(--terracotta)}.stat:nth-child(3){background:var(--gold)}.stat:nth-child(4){background:var(--blue)}
+.stat strong{display:block;font-family:Georgia,serif;font-size:1.7rem;line-height:1.15;color:var(--forest)}
+.stat span{display:block;color:#58665e;font-size:.76rem;margin-top:4px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:16px;margin:0 0 16px;box-shadow:var(--shadow)}
+.panel h2,.section-head h2{font:600 1.25rem Georgia,serif;margin:0;color:var(--forest)}
+.panel p{margin:8px 0;color:var(--muted);font-size:.91rem}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.action{border:1px solid #d9dbd0;background:#fffdf8;color:var(--ink);border-radius:11px;padding:10px 13px;font:inherit;font-size:.88rem;cursor:pointer}
+.action.primary{background:var(--forest2);border-color:var(--forest2);color:white}
+.status{font-size:.78rem!important;margin-top:12px!important;color:#68766e!important}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 3px 11px}
+.section-head small{color:var(--muted);font-size:.8rem}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.film{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow);min-width:0}
+.film:nth-child(4n+2){background:#fbf6ed}.film:nth-child(4n+3){background:#f6f8f1}.film:nth-child(4n+4){background:#f4f7f8}
+.film-heading{display:flex;align-items:flex-start;gap:10px}
+.film-no{flex:none;min-width:34px;text-align:center;border-radius:9px;padding:4px 6px;background:#e3ebe1;color:#315b48;font-size:.8rem;font-weight:750}
+.film h3{font:600 1.13rem/1.25 Georgia,serif;margin:0;color:#263f35}
+.year{font:normal .9rem system-ui;color:#68766e;white-space:nowrap}
+.original{font-size:.81rem;color:var(--muted);margin:4px 0 0}
+.meta{font-size:.79rem;color:#647169;margin:11px 0 8px}
+.plot{font-size:.91rem;margin:8px 0 10px}
+.watched{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.88rem;font-weight:600;color:#3f5147}
+input[type=checkbox]{width:18px;height:18px;accent-color:#35634c;flex:none}
+details{border-top:1px solid #dedfd5;margin-top:12px;padding-top:9px}
+summary{cursor:pointer;color:#355b49;font-size:.88rem;font-weight:700}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+.detail{font-size:.87rem}.detail.full{grid-column:1/-1}
+.detail label,.form-field label{display:block;color:#738077;font-size:.75rem;margin-bottom:3px;font-weight:600}
+.form-field select,.form-field textarea,.filters input,.filters select{width:100%;border:1px solid #dcded4;border-radius:10px;padding:9px 10px;background:#fffefa;color:var(--ink);font:inherit}
+.form-field textarea{min-height:74px;resize:vertical}
+.form-field.full{grid-column:1/-1}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px;margin-bottom:13px}
+.filters input,.filters select{min-width:0}
+.badge{display:inline-block;border-radius:20px;background:#e8eee7;color:#41634d;padding:3px 9px;font-size:.72rem;font-weight:700}
+.saga-card{border-radius:14px;padding:14px;margin:10px 0;border:1px solid var(--line);background:#f7f4ea}
+.saga-card:nth-child(2n){background:#edf2ec}
+.saga-card h3{font:600 1.08rem Georgia,serif;color:var(--forest);margin:0 0 4px}
+.saga-row{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-top:1px solid #dfe2d8;font-size:.88rem}
+.saga-row:first-of-type{margin-top:9px}
+.saga-row small{display:block;color:var(--muted);font-size:.76rem}
+.saga-row input{margin-top:3px}
+.period{padding:13px 14px;border-radius:13px;margin:9px 0;border:1px solid var(--line)}
+.period:nth-child(1){background:#e9eee4}.period:nth-child(2){background:#f2e4d9}.period:nth-child(3){background:#e4ebef}.period:nth-child(4){background:#eee7f0}.period:nth-child(5){background:#f1ead4}
+.period strong{font:600 1.05rem Georgia,serif;color:var(--forest)}
+.period small{display:block;color:var(--muted);margin-top:3px}
+.empty{padding:28px;text-align:center;border:1px dashed #c9cec4;border-radius:14px;color:var(--muted);background:#fbfaf5}
+.hidden{display:none!important}
+footer{text-align:center;color:#7a847d;font-size:.76rem;padding:22px 10px}
+@media(max-width:680px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.detail-grid{grid-template-columns:1fr}.detail.full,.form-field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div class="eyebrow">Archivio personale · cinema</div><h1>La mia cineteca</h1><p class="subtitle">100 film da vedere, valutare e ricordare.</p></div></header>
+<main>
+<nav aria-label="Sezioni">
+<button class="tab active" data-tab="dashboard">Panoramica</button>
+<button class="tab" data-tab="films">I film</button>
+<button class="tab" data-tab="extras">Complementari</button>
+<button class="tab" data-tab="sagas">Saghe</button>
+<button class="tab" data-tab="periods">Periodi</button>
+</nav>
+<section id="dashboard">
+<div class="stats">
+<div class="stat"><strong id="officialCount">0/5</strong><span>Film ufficiali visti (prova)</span></div>
+<div class="stat"><strong id="extraCount">0/2</strong><span>Film complementari visti</span></div>
+<div class="stat"><strong id="uniqueCount">0</strong><span>Film unici visti</span></div>
+<div class="stat"><strong id="sagaCount">0/2</strong><span>Saghe completate</span></div>
+</div>
+<div class="panel"><h2>Il tuo percorso</h2><p>Progressi, valutazioni e commenti sono salvati nel browser di questo dispositivo. Il backup JSON permette di conservarli e ripristinarli dopo gli aggiornamenti.</p>
+<div class="actions"><button class="action primary" id="exportBtn">Esporta backup JSON</button><button class="action" id="importBtn">Importa backup JSON</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+<p id="saveStatus" class="status" aria-live="polite">Controllo del salvataggio locale…</p></div>
+<div class="section-head"><h2>Da dove cominciare</h2><small>5 titoli dimostrativi</small></div>
+<div id="featured" class="cards"></div>
+</section>
+<section id="films" class="hidden">
+<div class="section-head"><h2>Film ufficiali</h2><small id="filmCountLabel">5 titoli di prova</small></div>
+<div class="filters"><input id="search" placeholder="Cerca titolo, regista, paese…" aria-label="Cerca film"><select id="statusFilter" aria-label="Stato"><option value="all">Tutti gli stati</option><option value="unwatched">Da vedere</option><option value="watched">Visti</option></select><select id="periodFilter" aria-label="Periodo"><option value="all">Tutti i periodi</option><option>1964–1979</option><option>1980–1989</option><option>1990–1999</option><option>2000–2009</option><option>2010–2026</option></select></div>
+<div id="filmList" class="cards"></div>
+</section>
+<section id="extras" class="hidden">
+<div class="section-head"><h2>Film complementari</h2><small>Fuori dai 100 ufficiali</small></div>
+<div class="panel"><p>Questi titoli servono a completare i percorsi di saga. Non aumentano il conteggio dei 100 ufficiali; entrano una sola volta nel totale dei film visti.</p><div id="extraList"></div></div>
+</section>
+<section id="sagas" class="hidden">
+<div class="section-head"><h2>Percorsi e saghe</h2><small>Regole di completamento</small></div>
+<div class="panel"><p>Una saga risulta completata quando hai visto il film guida ufficiale e tutti i capitoli consigliati/necessari. I capitoli facoltativi non bloccano il completamento.</p><div id="sagaList"></div></div>
+</section>
+<section id="periods" class="hidden">
+<div class="section-head"><h2>I cinque periodi</h2><small>Suddivisione cronologica</small></div><div id="periodList"></div>
+</section>
+<footer>Versione di prova · 5 film ufficiali e 2 complementari. La selezione definitiva dei 100 film verrà costruita successivamente.</footer>
+</main>
+<script>
+"use strict";
+const STORAGE_KEY="cineteca-personal-state-v1";
+const official=[
+{id:"film-godfather-1972",n:1,title:"Il padrino",original:"The Godfather",year:1972,director:"Francis Ford Coppola",country:"Stati Uniti",genre:"Gangster / drammatico",runtime:"175 min",plot:"Il patriarca di una famiglia mafiosa cerca di trasmettere il proprio potere, mentre il figlio più giovane viene progressivamente coinvolto negli affari di famiglia.",reason:"Un esempio magistrale di cinema classico moderno: regia, scrittura, interpretazioni e influenza culturale.",awards:"3 premi Oscar, incluso miglior film.",caution:"Primo capitolo di una saga; il secondo è un seguito di grande rilievo."},
+{id:"film-young-frankenstein-1974",n:2,title:"Frankenstein Junior",original:"Young Frankenstein",year:1974,director:"Mel Brooks",country:"Stati Uniti",genre:"Commedia / parodia",runtime:"106 min",plot:"Un discendente del celebre scienziato eredita il castello di famiglia e riprende gli esperimenti sulla vita.",reason:"Una delle parodie cinematografiche più influenti, costruita con grande precisione comica.",awards:"Candidato a 2 premi Oscar.",caution:"Umorismo e riferimenti al cinema horror classico."},
+{id:"film-jaws-1975",n:3,title:"Lo squalo",original:"Jaws",year:1975,director:"Steven Spielberg",country:"Stati Uniti",genre:"Thriller / avventura",runtime:"124 min",plot:"Uno squalo terrorizza una località balneare; uno sceriffo, un biologo marino e un cacciatore partono per fermarlo.",reason:"Ha ridefinito il blockbuster estivo grazie a suspense, montaggio e uso della musica.",awards:"3 premi Oscar.",caution:"I sequel sono generalmente meno apprezzati e non sono necessari per il film."},
+{id:"film-alien-1979",n:4,title:"Alien",original:"Alien",year:1979,director:"Ridley Scott",country:"Regno Unito / Stati Uniti",genre:"Fantascienza / horror",runtime:"117 min",plot:"L'equipaggio di un'astronave commerciale intercetta una forma di vita sconosciuta che si rivela letale.",reason:"Unisce fantascienza e horror in un universo visivo e sonoro diventato iconico.",awards:"Premio Oscar per gli effetti visivi.",caution:"Tono cupo, violenza e suspense intensa."},
+{id:"film-blade-runner-1982",n:5,title:"Blade Runner",original:"Blade Runner",year:1982,director:"Ridley Scott",country:"Stati Uniti",genre:"Fantascienza / neo-noir",runtime:"117 min (Final Cut)",plot:"In una Los Angeles futura, un cacciatore di replicanti deve rintracciare androidi fuggiti.",reason:"Opera fondamentale della fantascienza cinematografica per estetica, temi e influenza.",awards:"Nel tempo è diventato un classico del cinema di fantascienza.",caution:"Esistono più versioni del film; per la prima visione è consigliabile il Final Cut."}
+];
+const extras=[
+{id:"extra-aliens-1986",title:"Aliens - Scontro finale",original:"Aliens",year:1986,director:"James Cameron",country:"Stati Uniti",genre:"Fantascienza / azione",runtime:"137 min",plot:"Riprendendo il filo della vicenda di Ripley, una squadra di marines affronta una colonia infestata dagli xenomorfi.",role:"Capitolo consigliato per completare il percorso essenziale di Alien.",saga:"alien"},
+{id:"extra-godfather2-1974",title:"Il padrino - Parte II",original:"The Godfather Part II",year:1974,director:"Francis Ford Coppola",country:"Stati Uniti",genre:"Gangster / drammatico",runtime:"202 min",plot:"La storia alterna l'ascesa del giovane Vito Corleone al consolidamento del potere di Michael.",role:"Seguito fortemente consigliato per completare il percorso de Il padrino.",saga:"godfather"}
+];
+const sagas=[
+{id:"alien",name:"Saga di Alien",guide:"film-alien-1979",members:[{id:"film-alien-1979",label:"Alien (1979)",kind:"official",role:"Film guida ufficiale",required:true},{id:"extra-aliens-1986",label:"Aliens - Scontro finale (1986)",kind:"extra",role:"Seguito consigliato",required:true}]},
+{id:"godfather",name:"Saga de Il padrino",guide:"film-godfather-1972",members:[{id:"film-godfather-1972",label:"Il padrino (1972)",kind:"official",role:"Film guida ufficiale",required:true},{id:"extra-godfather2-1974",label:"Il padrino - Parte II (1974)",kind:"extra",role:"Seguito fortemente consigliato",required:true}]}
+];
+const periodNames=["1964–1979","1980–1989","1990–1999","2000–2009","2010–2026"];
+let state={version:2,progress:{},extras:{},sagas:{}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function readState(){
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const saved=JSON.parse(raw);if(saved&&typeof saved==="object"){state={...state,...saved,progress:saved.progress||{},extras:saved.extras||{},sagas:saved.sagas||{}};}}$("saveStatus").textContent="Dati locali caricati · "+new Date().toLocaleString("it-IT");}
+ catch(e){$("saveStatus").textContent="Il browser non ha consentito di leggere i dati locali.";}
+}
+function saveState(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$("saveStatus").textContent="Salvato su questo dispositivo · "+new Date().toLocaleTimeString("it-IT");}
+ catch(e){$("saveStatus").textContent="Attenzione: salvataggio locale non riuscito. Esporta un backup.";}
+ renderStats();
+}
+function progress(id){if(!state.progress[id])state.progress[id]={watched:false,rating:"",comment:""};return state.progress[id];}
+function isWatched(id,kind){return kind==="extra"?!!state.extras[id]:!!progress(id).watched;}
+function setWatched(id,kind,value){if(kind==="extra")state.extras[id]=value;else progress(id).watched=value;saveState();renderAll();}
+function periodOf(y){if(y<=1979)return periodNames[0];if(y<=1989)return periodNames[1];if(y<=1999)return periodNames[2];if(y<=2009)return periodNames[3];return periodNames[4];}
+function filmCard(f){
+ const p=progress(f.id);
+ return `<article class="film"><div class="film-heading"><span class="film-no">${String(f.n).padStart(2,"0")}</span><div><h3>${esc(f.title)} <span class="year">(${f.year})</span></h3><div class="original">${esc(f.original)} · ${esc(f.director)}</div></div></div><div class="meta">${esc(f.country)} · ${esc(f.genre)} · ${esc(f.runtime)}</div><p class="plot">${esc(f.plot)}</p><label class="watched"><input type="checkbox" data-watch-official="${f.id}" ${p.watched?"checked":""}> Film visto</label><details><summary>Scheda, valutazione e note</summary><div class="detail-grid"><div class="detail full"><label>Perché è nella lista</label>${esc(f.reason)}</div><div class="detail full"><label>Premi e riconoscimenti</label>${esc(f.awards)}</div><div class="detail full"><label>Avvertenze</label>${esc(f.caution)}</div><div class="form-field"><label for="rating-${f.id}">La tua valutazione (1–10)</label><select id="rating-${f.id}" data-rating="${f.id}"><option value="">Non valutato</option>${Array.from({length:10},(_,i)=>`<option value="${i+1}" ${String(p.rating)===String(i+1)?"selected":""}>${i+1}/10</option>`).join("")}</select></div><div class="form-field full"><label for="comment-${f.id}">Commento personale</label><textarea id="comment-${f.id}" data-comment="${f.id}" placeholder="Impressioni, scene, osservazioni…">${esc(p.comment)}</textarea></div></div></details></article>`;
+}
+function extraCard(f){
+ return `<div class="saga-row"><input type="checkbox" data-watch-extra="${f.id}" ${isWatched(f.id,"extra")?"checked":""}><div><strong>${esc(f.title)} (${f.year})</strong><small>${esc(f.original)} · ${esc(f.director)} · ${esc(f.runtime)}</small><small>${esc(f.role)}</small><small>${esc(f.plot)}</small></div></div>`;
+}
+function sagaComplete(s){return isWatched(s.guide,"official")&&s.members.filter(m=>m.required).every(m=>isWatched(m.id,m.kind));}
+function renderStats(){
+ const officialSeen=official.filter(f=>isWatched(f.id,"official")).length;
+ const extraSeen=extras.filter(f=>isWatched(f.id,"extra")).length;
+ $("officialCount").textContent=officialSeen+"/"+official.length;
+ $("extraCount").textContent=extraSeen+"/"+extras.length;
+ $("uniqueCount").textContent=officialSeen+extraSeen;
+ $("sagaCount").textContent=sagas.filter(s=>sagaComplete(s)).length+"/"+sagas.length;
+}
+function renderOfficialList(){
+ const q=$("search").value.trim().toLocaleLowerCase("it");
+ const st=$("statusFilter").value,period=$("periodFilter").value;
+ const found=official.filter(f=>{
+ const hay=[f.title,f.original,f.director,f.country,f.genre].join(" ").toLocaleLowerCase("it");
+ const seen=isWatched(f.id,"official");
+ return hay.includes(q)&&(st==="all"||(st==="watched"?seen:!seen))&&(period==="all"||periodOf(f.year)===period);
+ });
+ $("filmList").innerHTML=found.length?found.map(filmCard).join():'<div class="empty">Nessun film corrisponde ai filtri.</div>';
+ wireFilmInputs();
+}
+function renderSagas(){
+ $("sagaList").innerHTML=sagas.map(s=>`<div class="saga-card"><h3>${esc(s.name)} <span class="badge">${sagaComplete(s)?"Completata":"In corso"}</span></h3>${s.members.map(m=>`<label class="saga-row"><input type="checkbox" data-saga-watch="${m.id}" data-kind="${m.kind}" ${isWatched(m.id,m.kind)?"checked":""}><span><strong>${esc(m.label)}</strong><small>${esc(m.role)}</small></span></label>`).join("")}</div>`).join("");
+ document.querySelectorAll("[data-saga-watch]").forEach(el=>el.addEventListener("change",()=>setWatched(el.dataset.sagaWatch,el.dataset.kind,el.checked)));
+}
+function renderExtras(){$("extraList").innerHTML=extras.map(extraCard).join();document.querySelectorAll("[data-watch-extra]").forEach(el=>el.addEventListener("change",()=>setWatched(el.dataset.watchExtra,"extra",el.checked)));}
+function renderPeriods(){
+ $("periodList").innerHTML=periodNames.map((name,i)=>{const count=official.filter(f=>periodOf(f.year)===name).length;return `<div class="period"><strong>${name}</strong><small>${count} titoli dimostrativi nella versione di prova · ${i===0?"Dal 1964":""}</small></div>`}).join("");
+}
+function renderFeatured(){
+ $("featured").innerHTML=official.slice(0,2).map(filmCard).join();wireFilmInputs();
+}
+function wireFilmInputs(){
+ document.querySelectorAll("[data-watch-official]").forEach(el=>el.addEventListener("change",()=>setWatched(el.dataset.watchOfficial,"official",el.checked)));
+ document.querySelectorAll("[data-rating]").forEach(el=>el.addEventListener("change",()=>{progress(el.dataset.rating).rating=el.value;saveState();}));
+ document.querySelectorAll("[data-comment]").forEach(el=>el.addEventListener("change",()=>{progress(el.dataset.comment).comment=el.value;saveState();}));
+}
+function renderAll(){renderStats();renderFeatured();renderOfficialList();renderExtras();renderSagas();renderPeriods();}
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));["dashboard","films","extras","sagas","periods"].forEach(id=>$(id).classList.toggle("hidden",id!==btn.dataset.tab));}));
+["search","statusFilter","periodFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",renderOfficialList));
+$("exportBtn").addEventListener("click",()=>{
+ const payload={app:"La mia cineteca",formatVersion:2,exportedAt:new Date().toISOString(),state};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="backup-cineteca.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ $("saveStatus").textContent="Backup JSON preparato · "+new Date().toLocaleTimeString("it-IT");
+});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ try{
+ const data=JSON.parse(await file.text()),incoming=data.state||data;
+ if(!incoming||typeof incoming!=="object"||!incoming.progress)throw new Error("Formato non riconosciuto");
+ if(!confirm("Ripristinare questo backup? I dati locali attuali verranno sostituiti."))return;
+ state={version:2,progress:incoming.progress||{},extras:incoming.extras||{},sagas:incoming.sagas||{}};
+ saveState();renderAll();alert("Backup ripristinato.");
+ }catch(err){alert("Non riesco a leggere questo backup JSON. I dati attuali non sono stati modificati.");}
+ finally{e.target.value="";}
+});
+readState();renderAll();
+</script>
+</body>
+</html>
