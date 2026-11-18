@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17221d">
+<title>La mia cineteca</title>
+<style>
+:root{--bg:#f4f3ee;--paper:#fffefa;--ink:#202923;--muted:#68736c;--line:#e2e3da;--accent:#315b48;--soft:#e9efe9;--gold:#9a7132}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#17221d;color:#fff;padding:28px 20px 22px}header .wrap,main{max-width:1050px;margin:auto}
+.eyebrow{font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;color:#b9c9bd}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.1;margin:7px 0}.sub{color:#d2dbd4;margin:0}
+main{padding:20px 16px 56px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+button,.button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:9px 13px;font:inherit;font-size:.92rem;cursor:pointer}
+button.primary{background:var(--accent);color:white;border-color:var(--accent)}button.active{background:var(--soft);border-color:#a9b9ac;color:var(--accent);font-weight:650}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a9c7b2;outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 20px}.stat{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:13px}.stat strong{display:block;font-size:1.55rem;line-height:1.2}.stat span{font-size:.78rem;color:var(--muted)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:14px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:white;color:var(--ink);font:inherit}textarea{min-height:78px;resize:vertical}
+.section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 2px 10px}h2{font-size:1.2rem;margin:0}.muted{color:var(--muted);font-size:.88rem}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.film{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}.film-top{display:flex;gap:10px;align-items:flex-start}.number{flex:none;background:var(--soft);color:var(--accent);border-radius:8px;padding:3px 8px;font-size:.8rem;font-weight:700}.film h3{margin:0;font-size:1.05rem;line-height:1.3}.meta{font-size:.83rem;color:var(--muted);margin:3px 0 10px}.film p{margin:8px 0;font-size:.91rem}.film details{border-top:1px solid var(--line);margin-top:11px;padding-top:9px}.film summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.9rem}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px}.field.full{grid-column:1/-1}.watched{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.9rem}.watched input{width:auto;accent-color:var(--accent)}
+.saga{padding:13px 0;border-bottom:1px solid var(--line)}.saga:last-child{border:0}.saga h3{margin:0 0 4px;font-size:1rem}.checkline{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:.9rem}.checkline input{width:auto;margin-top:4px;accent-color:var(--accent)}
+.hidden{display:none!important}.empty{padding:30px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:14px}
+footer{color:var(--muted);font-size:.8rem;text-align:center;padding:20px}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Archivio personale</div><h1>La mia cineteca</h1><p class="sub">100 film da vedere, valutare e ricordare.</p></div></header>
+<main>
+<div class="toolbar" role="tablist" aria-label="Sezioni">
+<button class="tab active" data-tab="dashboard">Panoramica</button>
+<button class="tab" data-tab="films">I film</button>
+<button class="tab" data-tab="sagas">Saghe</button>
+<button class="tab" data-tab="periods">Periodi</button>
+</div>
+<section id="dashboard">
+<div class="stats">
+<div class="stat"><strong id="watchedCount">0/100</strong><span>Film ufficiali visti</span></div>
+<div class="stat"><strong id="extraCount">0</strong><span>Film complementari visti</span></div>
+<div class="stat"><strong id="totalCount">0</strong><span>Film unici visti</span></div>
+<div class="stat"><strong id="sagaCount">0</strong><span>Saghe completate</span></div>
+</div>
+<div class="panel"><h2>Il tuo percorso</h2><p class="muted">I progressi, le valutazioni e le note vengono salvati nel browser di questo dispositivo. Usa il backup JSON per conservarli o trasferirli.</p>
+<div class="toolbar" style="margin:12px 0 0"><button class="primary" id="exportBtn">Esporta backup JSON</button><button id="importBtn">Importa backup JSON</button><input id="importFile" type="file" accept="application/json,.json" class="hidden"></div>
+<p id="saveStatus" class="muted" aria-live="polite">Salvataggio locale attivo se supportato dal browser.</p></div>
+<div class="section-title"><h2>Da dove cominciare</h2><span class="muted">Film dimostrativi</span></div>
+<div id="recentFilms" class="cards"></div>
+</section>
+<section id="films" class="hidden">
+<div class="section-title"><h2>Archivio film</h2><span class="muted" id="filmResultCount"></span></div>
+<div class="panel filters">
+<input id="search" placeholder="Cerca titolo, regista, paese…" aria-label="Cerca film">
+<select id="statusFilter" aria-label="Filtra per stato"><option value="all">Tutti</option><option value="unwatched">Da vedere</option><option value="watched">Visti</option></select>
+<select id="decadeFilter" aria-label="Filtra per periodo"><option value="all">Tutti i periodi</option><option value="1964-1979">1964–1979</option><option value="1980-1989">1980–1989</option><option value="1990-1999">1990–1999</option><option value="2000-2009">2000–2009</option><option value="2010-2026">2010–2026</option></select>
+</div>
+<div id="filmList" class="cards"></div>
+</section>
+<section id="sagas" class="hidden"><div class="section-title"><h2>Percorsi e saghe</h2><span class="muted">Esempi da completare</span></div><div class="panel"><p class="muted">Le caselle qui sotto sono dimostrative. La struttura definitiva delle saghe verrà definita insieme alla selezione dei 100 film.</p><div id="sagaList"></div></div></section>
+<section id="periods" class="hidden"><div class="section-title"><h2>I cinque periodi</h2></div><div class="panel" id="periodList"></div></section>
+<footer>Versione tecnica iniziale · I titoli presenti sono esempi, non la selezione definitiva dei 100 film.</footer>
+</main>
+<script>
+const films=[
+{id:"film-godfather-1972",n:1,title:"Il padrino",original:"The Godfather",year:1972,director:"Francis Ford Coppola",country:"Stati Uniti",genre:"Gangster / drammatico",runtime:"175 min",plot:"Il patriarca di una famiglia mafiosa cerca di trasmettere il proprio potere, mentre il figlio più giovane viene progressivamente coinvolto negli affari di famiglia.",reason:"Esempio di cinema classico moderno: regia, scrittura, interpretazioni e influenza culturale.",awards:"3 premi Oscar, incluso miglior film.",caution:"Primo capitolo di una saga; il secondo è un seguito di grande rilievo."},
+{id:"film-young-frankenstein-1974",n:2,title:"Frankenstein Junior",original:"Young Frankenstein",year:1974,director:"Mel Brooks",country:"Stati Uniti",genre:"Commedia / parodia",runtime:"106 min",plot:"Un discendente del celebre scienziato eredita il castello di famiglia e riprende gli esperimenti sulla vita.",reason:"Una delle parodie cinematografiche più influenti, costruita con grande precisione comica.",awards:"Candidato a 2 premi Oscar.",caution:"Umorismo e riferimenti al cinema horror classico."},
+{id:"film-jaws-1975",n:3,title:"Lo squalo",original:"Jaws",year:1975,director:"Steven Spielberg",country:"Stati Uniti",genre:"Thriller / avventura",runtime:"124 min",plot:"Uno squalo terrorizza una località balneare; uno sceriffo, un biologo marino e un cacciatore partono per fermarlo.",reason:"Ha ridefinito il blockbuster estivo grazie a suspense, montaggio e uso della musica.",awards:"3 premi Oscar.",caution:"La saga prosegue con sequel generalmente meno apprezzati."},
+{id:"film-alien-1979",n:4,title:"Alien",original:"Alien",year:1979,director:"Ridley Scott",country:"Regno Unito / Stati Uniti",genre:"Fantascienza / horror",runtime:"117 min",plot:"L'equipaggio di un'astronave commerciale intercetta una forma di vita sconosciuta che si rivela letale.",reason:"Unisce fantascienza e horror in un universo visivo e sonoro diventato iconico.",awards:"Premio Oscar per gli effetti visivi.",caution:"Tono cupo, violenza e suspense intensa."},
+{id:"film-blade-runner-1982",n:5,title:"Blade Runner",original:"Blade Runner",year:1982,director:"Ridley Scott",country:"Stati Uniti",genre:"Fantascienza / neo-noir",runtime:"117 min (versione cinematografica)",plot:"In una Los Angeles futura, un cacciatore di replicanti deve rintracciare androidi fuggiti.",reason:"Opera fondamentale della fantascienza cinematografica per estetica, temi e influenza.",awards:"Numerosi riconoscimenti tecnici; nel tempo è diventato un classico.",caution:"Esistono più versioni del film; per la prima visione è consigliabile il Final Cut."}
+];
+const sagas=[{id:"alien",name:"Alien",items:[{id:"alien1",name:"Alien (1979)",note:"Film guida: incluso negli esempi ufficiali",done:false},{id:"aliens",name:"Aliens - Scontro finale (1986)",note:"Seguito consigliato",done:false},{id:"alien3",name:"Alien³ (1992)",note:"Facoltativo per un percorso essenziale",done:false}]},{id:"godfather",name:"Il padrino",items:[{id:"godfather1",name:"Il padrino (1972)",note:"Film guida: incluso negli esempi ufficiali",done:false},{id:"godfather2",name:"Il padrino - Parte II (1974)",note:"Seguito fortemente consigliato",done:false}]}];
+const periods=[["1964–1979","1964–1979"],["1980–1989","1980–1989"],["1990–1999","1990–1999"],["2000–2009","2000–2009"],["2010–2026","2010–2026"]];
+let state={progress:{},sagas:{},extras:{},version:1};
+const $=id=>document.getElementById(id);
+function load(){try{const raw=localStorage.getItem("cineteca-personal-state-v1");if(raw){const x=JSON.parse(raw);if(x&&x.progress)state={...state,...x}}}catch(e){$("saveStatus").textContent="Impossibile leggere il salvataggio locale in questo browser."}}
+function save(){try{localStorage.setItem("cineteca-personal-state-v1",JSON.stringify(state));$("saveStatus").textContent="Salvato su questo dispositivo · "+new Date().toLocaleString("it-IT")}catch(e){$("saveStatus").textContent="Attenzione: il browser non ha confermato il salvataggio locale."}renderStats()}
+function entry(id){return state.progress[id]||(state.progress[id]={watched:false,rating:"",comment:""})}
+function card(f){const p=entry(f.id);return `<article class="film"><div class="film-top"><span class="number">${String(f.n).padStart(2,"0")}</span><div><h3>${f.title} <span class="muted">(${f.year})</span></h3><div class="meta">${f.original} · ${f.director}</div></div></div><div class="meta">${f.country} · ${f.genre} · ${f.runtime}</div><p>${f.plot}</p><label class="watched"><input type="checkbox" data-watch="${f.id}" ${p.watched?"checked":""}> Film visto</label><details><summary>Scheda, valutazione e note</summary><div class="fields"><div class="field full"><label>Perché è nella lista</label><div>${f.reason}</div></div><div class="field full"><label>Premi e riconoscimenti</label><div>${f.awards}</div></div><div class="field full"><label>Avvertenze</label><div>${f.caution}</div></div><div class="field"><label for="rating-${f.id}">La tua valutazione (1–10)</label><select id="rating-${f.id}" data-rating="${f.id}"><option value="">Non valutato</option>${Array.from({length:10},(_,i)=>`<option value="${i+1}" ${String(p.rating)===String(i+1)?"selected":""}>${i+1}/10</option>`).join("")}</select></div><div class="field full"><label for="comment-${f.id}">Commento personale</label><textarea id="comment-${f.id}" data-comment="${f.id}" placeholder="Impressioni, scene, osservazioni…">${escapeHtml(p.comment||"")}</textarea></div></div></details></article>`}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderFilms(){const q=$("search").value.toLowerCase(),status=$("statusFilter").value,dec=$("decadeFilter").value;const list=films.filter(f=>{const p=entry(f.id),hay=[f.title,f.original,f.director,f.country,f.genre].join(" ").toLowerCase(),d=f.year<=1979?"1964-1979":f.year<=1989?"1980-1989":f.year<=1999?"1990-1999":f.year<=2009?"2000-2009":"2010-2026";return hay.includes(q)&&(status==="all"||(status==="watched"?p.watched:!p.watched))&&(dec==="all"||d===dec)});$("filmResultCount").textContent=list.length+" risultati";$("filmList").innerHTML=list.length?list.map(card).join(""):'<div class="empty">Nessun film corrisponde ai filtri.</div>';wireCards()}
+function wireCards(){document.querySelectorAll("[data-watch]").forEach(el=>el.onchange=()=>{entry(el.dataset.watch).watched=el.checked;save();renderFilms();renderDashboard()});document.querySelectorAll("[data-rating]").forEach(el=>el.onchange=()=>{entry(el.dataset.rating).rating=el.value;save()});document.querySelectorAll("[data-comment]").forEach(el=>el.onchange=()=>{entry(el.dataset.comment).comment=el.value;save()})}
+function renderStats(){const watched=films.filter(f=>entry(f.id).watched).length;const extras=Object.values(state.extras).filter(Boolean).length;$("watchedCount").textContent=watched+"/100";$("extraCount").textContent=extras;$("totalCount").textContent=watched+extras;$("sagaCount").textContent=sagas.filter(s=>s.items.filter(i=>!i.note.includes("Facoltativo")).every(i=>state.sagas[i.id])).length}
+function renderDashboard(){$("recentFilms").innerHTML=films.slice(0,2).map(card).join("");wireCards();renderStats()}
+function renderSagas(){$("sagaList").innerHTML=sagas.map(s=>`<div class="saga"><h3>${s.name}</h3>${s.items.map(i=>`<label class="checkline"><input type="checkbox" data-saga="${i.id}" ${state.sagas[i.id]?"checked":""}><span><strong>${i.name}</strong><br><span class="muted">${i.note}</span></span></label>`).join("")}</div>`).join("");document.querySelectorAll("[data-saga]").forEach(el=>el.onchange=()=>{state.sagas[el.dataset.saga]=el.checked;save()})}
+function renderPeriods(){$("periodList").innerHTML=periods.map(p=>`<div class="saga"><strong>${p[0]}</strong><div class="muted">${films.filter(f=>{const d=f.year<=1979?"1964–1979":f.year<=1989?"1980–1989":f.year<=1999?"1990–1999":f.year<=2009?"2000–2009":"2010–2026";return d===p[1]}).length} esempi attualmente presenti</div></div>`).join("")}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));["dashboard","films","sagas","periods"].forEach(id=>$(id).classList.toggle("hidden",id!==b.dataset.tab));if(b.dataset.tab==="films")renderFilms()});
+["search","statusFilter","decadeFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",renderFilms));
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"La mia cineteca",version:1,exportedAt:new Date().toISOString(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backup-cineteca.json";a.click();URL.revokeObjectURL(a.href)};
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=data.state||data;if(!incoming||typeof incoming!=="object"||!incoming.progress)throw new Error("Formato non riconosciuto");if(confirm("Importare il backup? I dati personali attuali verranno sostituiti.")){state={...state,...incoming};save();renderAll();alert("Backup importato.")}}catch(err){alert("File non valido o backup non riconosciuto.")}e.target.value=""};
+function renderAll(){renderStats();renderDashboard();renderFilms();renderSagas();renderPeriods()}
+load();renderAll();
+</script>
+</body>
+</html>
